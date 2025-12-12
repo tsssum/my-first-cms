@@ -9,10 +9,14 @@
 
         <form action="admin.php?action=<?php echo $results['formAction']?>" method="post">
             <input type="hidden" name="articleId" value="<?php echo $results['article']->id ?>">
-
-    <?php if ( isset( $results['errorMessage'] ) ) { ?>
-            <div class="errorMessage"><?php echo $results['errorMessage'] ?></div>
-    <?php } ?>
+        <?php 
+            if (!empty($results['errors'])) { ?>
+        <div class="errorMessage">
+            <?php foreach ($results['errors'] as $error) { ?>
+                <p><?php echo htmlspecialchars($error) ?></p>
+            <?php } ?>
+        </div>
+        <?php } ?>
 
             <ul>
 
@@ -41,6 +45,73 @@
                 </select>
               </li>
 
+              <li>
+                <label for="subcategoryId">Article Subcategory</label>
+                <select name="subcategoryId">
+                  <option value="">-- Без подкатегории --</option>
+    <?php 
+    // Группируем подкатегории по категориям
+    $groupedSubcategories = [];
+    if (isset($results['subcategories']) && is_array($results['subcategories'])) {
+        foreach ($results['subcategories'] as $subcat) {
+            if (!isset($groupedSubcategories[$subcat->category_id])) {
+                $groupedSubcategories[$subcat->category_id] = [];
+            }
+            $groupedSubcategories[$subcat->category_id][] = $subcat;
+        }
+    }
+    
+    // Выводим сгруппированные
+    foreach ($groupedSubcategories as $categoryId => $subcats) {
+        // Находим название категории
+        $categoryName = '';
+        foreach ($results['categories'] as $cat) {
+            if ($cat->id == $categoryId) {
+                $categoryName = $cat->name;
+                break;
+            }
+        }
+        
+        echo '<optgroup label="' . htmlspecialchars($categoryName) . '">';
+        foreach ($subcats as $subcat) {
+            echo '<option value="' . $subcat->id . '"';
+            echo (isset($results['article']->subcategoryId) && 
+                  $subcat->id == $results['article']->subcategoryId) ? ' selected' : '';
+            echo '>' . htmlspecialchars($subcat->name) . '</option>';
+        }
+        echo '</optgroup>';
+    }
+    ?>
+                </select>
+              </li>
+
+              <li>
+    <label for="authorIds">Авторы статьи</label>
+    <select name="authorIds[]" id="authorIds" multiple="multiple" size="5" style="height: auto;">
+        <option value="">-- Без авторов --</option>
+        <?php 
+        $allUsers = User::getList();
+        $articleAuthorIds = array();
+        if (isset($results['article']->authors) && is_array($results['article']->authors)) {
+            foreach ($results['article']->authors as $author) {
+                $articleAuthorIds[] = $author->id;
+            }
+        }
+        
+        foreach ($allUsers['results'] as $user) { 
+            if ($user->active) { 
+        ?>
+            <option value="<?php echo $user->id ?>" 
+                <?php echo in_array($user->id, $articleAuthorIds) ? 'selected="selected"' : '' ?>>
+                <?php echo htmlspecialchars($user->username) ?>
+            </option>
+        <?php 
+            }
+        } 
+        ?>
+    </select>
+    <small style="color: #666;">Для множественного выбора зажмите Ctrl (Cmd на Mac)</small>
+</li>
               <li>
                 <label for="publicationDate">Publication Date</label>
                 <input type="date" name="publicationDate" id="publicationDate" placeholder="YYYY-MM-DD" required maxlength="10" value="<?php echo $results['article']->publicationDate ? date( "Y-m-d", $results['article']->publicationDate ) : "" ?>" />

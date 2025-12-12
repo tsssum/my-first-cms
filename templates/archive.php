@@ -26,6 +26,29 @@
                             <?php echo htmlspecialchars( $results['categories'][$article->categoryId]->name ) ?>
                         </a>
                     </span>
+                    <?php } ?>        
+
+                    <?php if ( !$results['subcategory'] && $article->subcategoryId ) { ?>
+                    <span class="subcategory">
+                        in subcategory
+                        <a href=".?action=archive&amp;subcategoryId=<?php echo $article->subcategoryId?>">
+                            <?php echo htmlspecialchars( $results['subcategories'][$article->subcategoryId]->name ) ?>
+                        </a>
+                    </span>
+                    <span class="authors">
+                    by 
+                    <?php 
+                    if (!empty($article->authors)) {
+                        $authorNames = array();
+                        foreach ($article->authors as $author) {
+                            $authorNames[] = htmlspecialchars($author->username);
+                        }
+                    echo implode(', ', $authorNames);
+                    } else {
+                        echo "Нет автора";
+                    }
+                    ?>
+                    </span>
                     <?php } ?>          
                 </h2>
               <p class="summary"><?php echo htmlspecialchars( $article->summary )?></p>

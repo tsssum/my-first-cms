@@ -102,7 +102,7 @@ h3.categoryDescription {
   padding-left: 130px;
 }
 
-.category {
+.category, .subcategory, .authors, .views {
   font-style: italic;
   font-weight: normal;
   font-size: 60%;
@@ -111,7 +111,11 @@ h3.categoryDescription {
   line-height: 2em;
 }
 
-.category a {
+.views{
+  padding-left: 700px;
+}
+
+.category a, .subcategory a{
   color: #999;
   text-decoration: underline;
 }
@@ -351,4 +355,3 @@ ul.ajax-load li {
     padding: 3px; /* Поля вокруг текста */
     font-size: 12px;
 }
-        

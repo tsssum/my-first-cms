@@ -1,30 +1,43 @@
 <?php
-require ('../config.php');
+require_once('../config.php');
+require_once('../classes/Article.php');
 
-if (isset($_GET['articleId'])) {
-    $article = Article::getById((int)$_GET['articleId']);
-    echo $article->content;
-}
-if (isset ($_POST['articleId'])) {
-    //die("Привет)");
-    $article = Article::getById((int)$_POST['articleId']);
-    echo json_encode($article);
-//        die("Привет)");
-//    $conn = new PDO( DB_DSN, DB_USERNAME, DB_PASSWORD );
-//    
-//        if (isset($conn)) {
-//            die("Соединенте установлено");
-//        }
-//        else {
-//            die("Соединение не установлено");
-//        }
-//    $article = "WHERE Id=". (int)$_POST[articleId];
-//    echo $article;
-//    $sql = "SELECT content FROM articles". $article;
-//    $contentFromDb = $conn->prepare( $sql );
-//    $contentFromDb->execute();
-//    $result = $contentFromDb->fetch();
-//    $conn = null;
-//    echo json_encode($result);
-}
+// Устанавливаем заголовок для JSON
+header('Content-Type: application/json; charset=utf-8');
 
+// Проверяем, есть ли параметр articleId
+if (isset($_REQUEST['articleId'])) {
+    $articleId = (int)$_REQUEST['articleId'];
+    
+    try {
+        // Получаем статью
+        $article = Article::getById($articleId);
+        
+        if ($article) {
+            // Возвращаем JSON с содержанием статьи
+            echo json_encode(array(
+                'content' => $article->content,
+                'status' => 'success'
+            ));
+        } else {
+            // Статья не найдена
+            echo json_encode(array(
+                'error' => 'Статья не найдена',
+                'status' => 'error'
+            ));
+        }
+    } catch (Exception $e) {
+        // Ошибка при получении статьи
+        echo json_encode(array(
+            'error' => 'Ошибка сервера: ' . $e->getMessage(),
+            'status' => 'error'
+        ));
+    }
+} else {
+    // Не указан articleId
+    echo json_encode(array(
+        'error' => 'Не указан ID статьи',
+        'status' => 'error'
+    ));
+}
+?>

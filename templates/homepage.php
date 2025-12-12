@@ -25,15 +25,32 @@
                         <?php echo "Без категории"?>
                     </span>
                 <?php } ?>
-            </h2>
-            <p class="summary"><?php echo htmlspecialchars(substr($article->content, 0, 50).'...');?></p>
+
+                <?php if (isset($article->subcategoryId)) { ?>
+                    <span class="subcategory">
+                        in 
+                        <a href=".?action=archive&amp;subcategoryId=<?php echo $article->subcategoryId?>">
+                            <?php echo htmlspecialchars($results['subcategories'][$article->subcategoryId]->name )?>
+                        </a>
+                    </span>
+                <?php } 
+                else { ?>
+                    <span class="subcategory">
+                        <?php echo "Без подкатегории"?>
+                    </span>
+                <?php } ?>
+                <span class="views">
+                <?php echo htmlspecialchars($article->views); ?>
+            </span>
+            </h2>            
+            <p class="summary<?php echo $article->id?>"><?php echo htmlspecialchars(mb_strimwidth($article->content, 0, 53, '...'))?></p>
             <img id="loader-identity" src="JS/ajax-loader.gif" alt="gif">
             
             <ul class="ajax-load">
                 <li><a href=".?action=viewArticle&amp;articleId=<?php echo $article->id?>" class="ajaxArticleBodyByPost" data-contentId="<?php echo $article->id?>">Показать продолжение (POST)</a></li>
                 <li><a href=".?action=viewArticle&amp;articleId=<?php echo $article->id?>" class="ajaxArticleBodyByGet" data-contentId="<?php echo $article->id?>">Показать продолжение (GET)</a></li>
-                <li><a href=".?action=viewArticle&amp;articleId=<?php echo $article->id?>" class="">(POST) -- NEW</a></li>
-                <li><a href=".?action=viewArticle&amp;articleId=<?php echo $article->id?>" class="">(GET)  -- NEW</a></li>
+                <li><a href=".?action=viewArticle&amp;articleId=<?php echo $article->id?>" class="ajaxArticlePost" data-contentId="<?php echo $article->id?>">(POST) -- NEW</a></li>
+                <li><a href=".?action=viewArticle&amp;articleId=<?php echo $article->id?>" class="ajaxArticleGet" data-contentId="<?php echo $article->id?>">(GET)  -- NEW</a></li>
             </ul>
             <a href=".?action=viewArticle&amp;articleId=<?php echo $article->id?>" class="showContent" data-contentId="<?php echo $article->id?>">Показать полностью</a>
         </li>

@@ -17,6 +17,8 @@
               <th>Publication Date</th>
               <th>Article</th>
               <th>Category</th>
+              <th>Subcategory</th>
+              <th>Authors</th>
               <th>Active</th>
             </tr>
 
@@ -43,6 +45,38 @@
                 echo "Без категории";
                 }?>
               </td>
+             <td>
+    <?php 
+    if (isset($article->subcategoryId) && $article->subcategoryId > 0) {
+        $subcategoryName = "Без подкатегории";
+         
+        foreach ($results['subcategories'] as $subcat) {
+            if ($subcat->id == $article->subcategoryId) {
+                $subcategoryName = htmlspecialchars($subcat->name);
+                break;
+            }
+        }
+        echo $subcategoryName;
+    } else {
+        echo "Без подкатегории";
+    }
+    ?>
+</td>
+<td>
+        <?php 
+        $authors = $article->getAuthors();
+        if (!empty($authors)) {
+            $authorNames = array();
+            foreach ($authors as $author) {
+                $authorNames[] = htmlspecialchars($author->username);
+            }
+            echo implode(', ', $authorNames);
+        } else {
+            echo "Нет авторов";
+        }
+        ?>
+    </td>
+              
               <td>
                 <?php if ($article->active) { ?>
                   <span style="color: green;">Active</span>

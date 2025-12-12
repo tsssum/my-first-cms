@@ -11,6 +11,25 @@
             <?php echo htmlspecialchars($results['category']->name) ?>
         </a>
     <?php } ?>
+
+    <span class="views-count">
+        <?php echo htmlspecialchars($results['article']->views); ?> просмотров
+    </span>
+    
+
+
+    <?php if (!empty($results['article']->authors)): ?>
+    <div class="article-authors">
+        <strong>Авторы:</strong>
+        <?php 
+        $authorNames = array();
+        foreach ($results['article']->authors as $author) {
+            $authorNames[] = htmlspecialchars($author->username);
+        }
+        echo implode(', ', $authorNames);
+        ?>
+    </div>
+    <?php endif; ?>
         
     </p>
 
